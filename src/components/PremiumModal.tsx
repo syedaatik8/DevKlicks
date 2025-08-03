@@ -17,8 +17,6 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
   const [success, setSuccess] = useState('')
   const paypalRef = useRef<HTMLDivElement>(null)
 
-  if (!isOpen) return null
-
   const basePrice = 69
   const lifetimeUpdatesPrice = 40
   const totalPrice = basePrice + (includeLifetimeUpdates ? lifetimeUpdatesPrice : 0)
@@ -36,6 +34,8 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
       renderPayPalButtons()
     }
   }, [includeLifetimeUpdates, paypalLoaded, user])
+
+  if (!isOpen) return null
 
   const initializePayPal = async () => {
     try {
@@ -59,7 +59,7 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
     const orderData = {
       userId: user.id,
       amount: totalPrice,
-      includesLifetimeUpdates,
+      includeLifetimeUpdates,
       currency: 'USD'
     }
 
