@@ -6,11 +6,19 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   userTier: 'free' | 'premium'
+  hasLifetimeUpdates: boolean
+  purchaseInfo: {
+    hasPremium: boolean
+    hasLifetimeUpdates: boolean
+    activatedAt: string | null
+    totalSpent: number
+  } | null
   loading: boolean
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: AuthError | null }>
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<{ error: AuthError | null }>
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>
+  refreshPurchaseInfo: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -27,6 +35,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [userTier, setUserTier] = useState<'free' | 'premium'>('free')
+  const [hasLifetimeUpdates, setHasLifetimeUpdates] = useState(false)
+  const [purchaseInfo, setPurchaseInfo] = useState<{
+    hasPremium: boolean
+    hasLifetimeUpdates: boolean
+    activatedAt: string | null
+    totalSpent: number
+  } | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -37,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Load user tier if user exists
       if (session?.user) {
-        loadUserTier(session.user.id)
+        loadUserInfo(session.user.id)
       }
       
       setLoading(false)
@@ -49,26 +64,64 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null)
       
       if (session?.user) {
-        loadUserTier(session.user.id)
+        loadUserInfo(session.user.id)
       } else {
         setUserTier('free')
+        setHasLifetimeUpdates(false)
+        setPurchaseInfo(null)
       }
     })
 
     return () => subscription.unsubscribe()
   }, [])
 
-  const loadUserTier = async (userId: string) => {
+  const loadUserInfo = async (userId: string) => {
     try {
       const { data } = await supabase
         .from('user_profiles')
-        .select('subscription_tier')
+        .select('subscription_tier, has_premium_access, has_lifetime_updates, premium_activated_at')
         .eq('id', userId)
         .single()
       
-      setUserTier(data?.subscription_tier || 'free')
+      const tier = data?.has_premium_access ? 'premium' : 'free'
+      setUserTier(tier)
+      setHasLifetimeUpdates(data?.has_lifetime_updates || false)
+      
+      // Load purchase info
+      await loadPurchaseInfo(userId)
     } catch (err) {
       setUserTier('free')
+      setHasLifetimeUpdates(false)
+      setPurchaseInfo(null)
+    }
+  }
+
+  const loadPurchaseInfo = async (userId: string) => {
+    try {
+      const { data, error } = await supabase.rpc('get_user_purchase_info', {
+        p_user_id: userId
+      })
+
+      if (error) throw error
+
+      if (data && data.length > 0) {
+        const info = data[0]
+        setPurchaseInfo({
+          hasPremium: info.has_premium || false,
+          hasLifetimeUpdates: info.has_lifetime_updates || false,
+          activatedAt: info.activated_at || null,
+          totalSpent: parseFloat(info.total_spent) || 0
+        })
+      }
+    } catch (err) {
+      console.error('Error loading purchase info:', err)
+      setPurchaseInfo(null)
+    }
+  }
+
+  const refreshPurchaseInfo = async () => {
+    if (user) {
+      await loadUserInfo(user.id)
     }
   }
 
@@ -97,6 +150,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { error } = await supabase.auth.signOut()
     if (!error) {
       setUserTier('free')
+      setHasLifetimeUpdates(false)
+      setPurchaseInfo(null)
     }
     return { error }
   }
@@ -110,11 +165,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     session,
     userTier,
+    hasLifetimeUpdates,
+    purchaseInfo,
     loading,
     signUp,
     signIn,
     signOut,
     resetPassword,
+    refreshPurchaseInfo,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

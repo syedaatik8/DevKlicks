@@ -135,33 +135,28 @@ export const BackgroundRemover: React.FC = () => {
   }, [])
 
   const removeBackgroundWithClipdrop = async (imageFile: File): Promise<string> => {
-    const apiKey = import.meta.env.VITE_CLIPDROP_API_KEY
-    
-    if (!apiKey) {
-      throw new Error('Clipdrop API key not configured')
-    }
-
     const formData = new FormData()
     formData.append('image_file', imageFile)
 
-    const response = await fetch('https://clipdrop-api.co/remove-background/v1', {
+    // Use Supabase Edge Function to hide API key
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/remove-background`, {
       method: 'POST',
       headers: {
-        'x-api-key': apiKey,
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       },
       body: formData,
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Clipdrop API error:', errorText)
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+      console.error('Background removal error:', errorData)
       
       if (response.status === 429) {
         throw new Error('API rate limit exceeded. Please try again later.')
       } else if (response.status === 401) {
-        throw new Error('Invalid API key. Please check configuration.')
+        throw new Error('Authentication failed. Please try again.')
       } else if (response.status === 400) {
-        throw new Error('Invalid image format. Please use JPEG, PNG, or WebP.')
+        throw new Error(errorData.error || 'Invalid image format. Please use JPEG, PNG, or WebP.')
       } else {
         throw new Error(`API error: ${response.status}. Please try again.`)
       }

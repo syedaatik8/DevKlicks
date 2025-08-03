@@ -1,86 +1,101 @@
-import React, { useState } from 'react'
-import { X, Crown, Check, Zap, Star, Users } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+import { X, Crown, Check, Zap, Star, Users, Infinity, Shield } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
+import { paypalService } from '../services/paypalService'
 
 interface PremiumModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
-interface PricingPlan {
-  name: string
-  icon: React.ComponentType<any>
-  price: {
-    monthly: number
-    yearly: number
-    lifetime: number
-  }
-  features: string[]
-  popular?: boolean
-  color: string
-}
-
-const plans: PricingPlan[] = [
-  {
-    name: 'Hobbyist',
-    icon: Zap,
-    price: { monthly: 9, yearly: 90, lifetime: 199 },
-    features: [
-      '50 image resizes/day',
-      'PDF tools access',
-      'JSON formatter',
-      'Basic support',
-      'No watermarks'
-    ],
-    color: 'from-blue-500 to-blue-600'
-  },
-  {
-    name: 'Pro',
-    icon: Crown,
-    price: { monthly: 19, yearly: 190, lifetime: 399 },
-    features: [
-      'Unlimited image resizes',
-      'All PDF tools',
-      'Advanced JSON tools',
-      'Code generators',
-      'Priority support',
-      'API access',
-      'Batch processing'
-    ],
-    popular: true,
-    color: 'from-purple-500 to-purple-600'
-  },
-  {
-    name: 'Agency',
-    icon: Users,
-    price: { monthly: 49, yearly: 490, lifetime: 999 },
-    features: [
-      'Everything in Pro',
-      'Team collaboration',
-      'White-label options',
-      'Custom integrations',
-      'Dedicated support',
-      'Usage analytics',
-      'Custom limits'
-    ],
-    color: 'from-emerald-500 to-emerald-600'
-  }
-]
-
 export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) => {
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly' | 'lifetime'>('monthly')
+  const { user, refreshPurchaseInfo } = useAuth()
+  const [includeLifetimeUpdates, setIncludeLifetimeUpdates] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [paypalLoaded, setPaypalLoaded] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const paypalRef = useRef<HTMLDivElement>(null)
 
   if (!isOpen) return null
 
-  const handlePlanSelect = (plan: PricingPlan) => {
-    // TODO: Integrate with payment gateway
-    console.log(`Selected ${plan.name} - ${billingCycle}`)
-    // For now, just close the modal
-    onClose()
+  const basePrice = 69
+  const lifetimeUpdatesPrice = 40
+  const totalPrice = basePrice + (includeLifetimeUpdates ? lifetimeUpdatesPrice : 0)
+
+  // Initialize PayPal when modal opens
+  useEffect(() => {
+    if (isOpen && !paypalLoaded) {
+      initializePayPal()
+    }
+  }, [isOpen, paypalLoaded])
+
+  // Re-render PayPal buttons when price changes
+  useEffect(() => {
+    if (paypalLoaded && paypalRef.current && user) {
+      renderPayPalButtons()
+    }
+  }, [includeLifetimeUpdates, paypalLoaded, user])
+
+  const initializePayPal = async () => {
+    try {
+      const loaded = await paypalService.initializePayPal()
+      if (loaded) {
+        setPaypalLoaded(true)
+      } else {
+        setError('Failed to load PayPal. Please refresh and try again.')
+      }
+    } catch (err) {
+      setError('Failed to initialize payment system.')
+    }
+  }
+
+  const renderPayPalButtons = () => {
+    if (!paypalRef.current || !user || !window.paypal) return
+
+    // Clear existing buttons
+    paypalRef.current.innerHTML = ''
+
+    const orderData = {
+      userId: user.id,
+      amount: totalPrice,
+      includesLifetimeUpdates,
+      currency: 'USD'
+    }
+
+    const config = paypalService.getButtonConfig(orderData)
+
+    window.paypal.Buttons({
+      ...config,
+      onApprove: async (data: any) => {
+        setIsProcessing(true)
+        try {
+          const result = await config.onApprove(data)
+          if (result.success) {
+            setSuccess('Payment successful! Your premium access has been activated.')
+            await refreshPurchaseInfo()
+            setTimeout(() => {
+              onClose()
+            }, 2000)
+          } else {
+            setError(result.error || 'Payment processing failed')
+          }
+        } catch (err) {
+          setError('Payment processing failed. Please try again.')
+        } finally {
+          setIsProcessing(false)
+        }
+      },
+      onError: (err: any) => {
+        setError('Payment failed. Please try again.')
+        setIsProcessing(false)
+      }
+    }).render(paypalRef.current)
   }
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-8 z-50 overflow-hidden">
-      <div className="bg-gray-800/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl max-w-7xl w-full max-h-[95vh] overflow-y-auto scrollbar-hide">
+      <div className="bg-gray-800/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto scrollbar-hide">
         <style jsx>{`
           .scrollbar-hide {
             -ms-overflow-style: none;
@@ -94,8 +109,8 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
         {/* Header */}
         <div className="flex items-center justify-between p-10 border-b border-gray-700/50">
           <div>
-            <h2 className="text-4xl font-bold text-white mb-3">Upgrade to Premium</h2>
-            <p className="text-gray-400 text-lg">Unlock powerful developer tools and boost your productivity</p>
+            <h2 className="text-4xl font-bold text-white mb-3">Unlock DevKlicks Premium</h2>
+            <p className="text-gray-400 text-lg">Get lifetime access to all current developer tools</p>
           </div>
           <button
             onClick={onClose}
@@ -105,113 +120,184 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
           </button>
         </div>
 
-        {/* Billing Toggle */}
-        <div className="p-10 pb-6">
-          <div className="flex items-center justify-center mb-10">
-            <div className="bg-gray-700/50 rounded-xl p-2 flex space-x-2">
-              <button
-                onClick={() => setBillingCycle('monthly')}
-                className={`px-8 py-3 rounded-lg text-base font-medium transition-all ${
-                  billingCycle === 'monthly'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setBillingCycle('yearly')}
-                className={`px-8 py-3 rounded-lg text-base font-medium transition-all relative ${
-                  billingCycle === 'yearly'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                Yearly
-                <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                  Save 17%
+        {/* Main Content */}
+        <div className="p-10">
+          {/* Single Plan Card */}
+          <div className="max-w-2xl mx-auto">
+            <div className="relative bg-gradient-to-br from-purple-600/20 to-blue-600/20 border-2 border-purple-500/50 rounded-2xl p-8 mb-8">
+              {/* Popular Badge */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <span className="bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm font-medium px-6 py-2 rounded-full">
+                  One-Time Payment
                 </span>
-              </button>
-              <button
-                onClick={() => setBillingCycle('lifetime')}
-                className={`px-8 py-3 rounded-lg text-base font-medium transition-all relative ${
-                  billingCycle === 'lifetime'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                Lifetime
-                <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded-full">
-                  Best
-                </span>
-              </button>
-            </div>
-          </div>
+              </div>
 
-          {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {plans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative bg-gray-700/30 border rounded-2xl p-8 transition-all duration-200 hover:scale-105 flex flex-col h-full ${
-                  plan.popular
-                    ? 'border-purple-500/50 ring-2 ring-purple-500/20'
-                    : 'border-gray-600/50 hover:border-gray-500/50'
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-medium px-4 py-2 rounded-full">
-                      Most Popular
-                    </span>
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-6">
+                  <Crown className="w-10 h-10 text-white" />
+                </div>
+                <h3 className="text-3xl font-bold text-white mb-4">DevKlicks Premium</h3>
+                <div className="text-6xl font-bold text-white mb-4">
+                  ${totalPrice}
+                  <span className="text-xl text-gray-400 font-normal ml-2">one-time</span>
+                </div>
+                <p className="text-gray-400">
+                  Lifetime access to all current features
+                </p>
+              </div>
+
+              {/* Base Features */}
+              <div className="mb-8">
+                <h4 className="text-xl font-semibold text-white mb-4 flex items-center">
+                  <Check className="w-5 h-5 text-green-400 mr-2" />
+                  Included Features ($69)
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {[
+                    'Unlimited Image Resizing',
+                    'AI Background Removal',
+                    'Advanced Color Picker',
+                    'Favicon Generator',
+                    'QR Code Generator (All formats)',
+                    'Content Generator',
+                    'Bulk Processing',
+                    'High-Quality Exports',
+                    'Priority Support',
+                    'No Watermarks'
+                  ].map((feature, index) => (
+                    <div key={index} className="flex items-center text-gray-300">
+                      <Check className="w-4 h-4 text-green-400 mr-3 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Lifetime Updates Add-on */}
+              <div className="border-t border-gray-600/50 pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="lifetime-updates"
+                      checked={includeLifetimeUpdates}
+                      onChange={(e) => setIncludeLifetimeUpdates(e.target.checked)}
+                      className="w-5 h-5 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500 focus:ring-2"
+                    />
+                    <label htmlFor="lifetime-updates" className="ml-3 cursor-pointer">
+                      <div className="flex items-center">
+                        <Infinity className="w-5 h-5 text-purple-400 mr-2" />
+                        <span className="text-lg font-semibold text-white">Lifetime Updates</span>
+                        <span className="ml-2 bg-purple-500/20 text-purple-300 text-xs px-2 py-1 rounded-full">
+                          +$40
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                
+                <div className="ml-8 mb-4">
+                  <p className="text-gray-400 text-sm mb-3">
+                    Get access to all future features and updates forever
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {[
+                      'All future tool releases',
+                      'Feature enhancements',
+                      'New export formats',
+                      'Advanced integrations',
+                      'API access (when available)',
+                      'Beta feature access'
+                    ].map((feature, index) => (
+                      <div key={index} className="flex items-center text-gray-400">
+                        <Shield className="w-3 h-3 text-purple-400 mr-2 flex-shrink-0" />
+                        <span className="text-xs">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Messages */}
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mt-6">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
+
+              {success && (
+                <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 mt-6">
+                  <p className="text-green-400 text-sm">{success}</p>
+                </div>
+              )}
+
+              {/* PayPal Button Container */}
+              <div className="mt-6">
+                <div className="text-center mb-4">
+                  <p className="text-white font-semibold text-lg">
+                    Complete Purchase - ${totalPrice} One Time
+                  </p>
+                  <p className="text-gray-400 text-sm">Secure payment with PayPal</p>
+                </div>
+                
+                {isProcessing && (
+                  <div className="text-center py-4">
+                    <div className="inline-flex items-center">
+                      <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <span className="text-gray-400">Processing payment...</span>
+                    </div>
                   </div>
                 )}
-
-                <div className="text-center mb-8">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${plan.color} rounded-xl flex items-center justify-center mx-auto mb-6`}>
-                    <plan.icon className="w-8 h-8 text-white" />
+                
+                <div ref={paypalRef} className={isProcessing ? 'opacity-50 pointer-events-none' : ''}></div>
+                
+                {!paypalLoaded && (
+                  <div className="text-center py-4">
+                    <div className="inline-flex items-center">
+                      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <span className="text-gray-400">Loading payment options...</span>
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">{plan.name}</h3>
-                  <div className="text-5xl font-bold text-white mb-2">
-                    ${plan.price[billingCycle]}
-                    {billingCycle !== 'lifetime' && (
-                      <span className="text-xl text-gray-400 font-normal">
-                        /{billingCycle === 'monthly' ? 'mo' : 'yr'}
-                      </span>
-                    )}
-                  </div>
-                  {billingCycle === 'yearly' && (
-                    <p className="text-sm text-gray-400">
-                      ${(plan.price.yearly / 12).toFixed(0)}/month billed yearly
-                    </p>
-                  )}
-                </div>
-
-                <ul className="space-y-4 mb-8 flex-grow">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center text-gray-300">
-                      <Check className="w-5 h-5 text-green-400 mr-4 flex-shrink-0" />
-                      <span className="text-base">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  onClick={() => handlePlanSelect(plan)}
-                  className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] text-lg mt-auto`}
-                >
-                  Choose {plan.name}
-                </button>
+                )}
               </div>
-            ))}
+
+              {/* Payment Security Info */}
+              <div className="mt-4 text-center">
+                <p className="text-gray-400 text-xs">
+                  🔒 Secure 256-bit SSL encryption • PayPal Buyer Protection • 30-day money-back guarantee
+                </p>
+              </div>
+            </div>
+
+            {/* Value Proposition */}
+            <div className="bg-gray-700/30 rounded-xl p-6 text-center">
+              <h4 className="text-lg font-semibold text-white mb-3">Why Choose DevKlicks?</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="flex flex-col items-center">
+                  <Zap className="w-8 h-8 text-yellow-400 mb-2" />
+                  <span className="text-white font-medium">Instant Access</span>
+                  <span className="text-gray-400">No monthly fees</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <Shield className="w-8 h-8 text-green-400 mb-2" />
+                  <span className="text-white font-medium">Secure & Private</span>
+                  <span className="text-gray-400">Your data stays safe</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <Star className="w-8 h-8 text-purple-400 mb-2" />
+                  <span className="text-white font-medium">Professional Tools</span>
+                  <span className="text-gray-400">Built for developers</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Footer */}
         <div className="p-10 pt-6 border-t border-gray-700/50">
           <div className="text-center text-gray-400">
-            <p className="mb-3 text-lg">✨ All plans include a 14-day free trial</p>
-            <p className="text-base">Cancel anytime • No hidden fees • Secure payment</p>
+            <p className="mb-3 text-lg">✨ 30-day money-back guarantee</p>
+            <p className="text-base">Secure payment • No hidden fees • Instant activation</p>
           </div>
         </div>
       </div>
