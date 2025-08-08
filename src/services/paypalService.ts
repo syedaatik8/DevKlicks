@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import { ENV } from '../lib/env'
 
 export interface PayPalOrderData {
   userId: string
@@ -19,8 +20,8 @@ class PayPalService {
   private environment: 'sandbox' | 'production'
 
   constructor() {
-    this.clientId = import.meta.env.VITE_PAYPAL_CLIENT_ID || ''
-    this.environment = import.meta.env.VITE_PAYPAL_ENVIRONMENT === 'production' ? 'production' : 'sandbox'
+    this.clientId = ENV.PAYPAL_CLIENT_ID
+    this.environment = ENV.PAYPAL_ENVIRONMENT === 'production' ? 'production' : 'sandbox'
     
     if (!this.clientId) {
       console.warn('PayPal Client ID not configured. Please set VITE_PAYPAL_CLIENT_ID environment variable.')
