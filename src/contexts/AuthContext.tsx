@@ -67,10 +67,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (session?.user) {
         loadUserInfo(session.user.id)
       } else {
+        // Reset state when user signs out
         setUserTier('free')
         setHasLifetimeUpdates(false)
         setPurchaseInfo(null)
       }
+      
+      setLoading(false)
     })
 
     return () => subscription.unsubscribe()
@@ -149,13 +152,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
-    if (!error) {
-      setUserTier('free')
-      setHasLifetimeUpdates(false)
-      setPurchaseInfo(null)
-      // Note: We can't use toast here as this context is above ToastProvider
-      // Toast will be handled in the component that calls signOut
-    }
     return { error }
   }
 

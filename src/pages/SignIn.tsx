@@ -21,7 +21,10 @@ export default function SignIn() {
     setError('');
 
     try {
-      await signIn(email, password);
+      const { error } = await signIn(email, password);
+      if (error) {
+        throw error;
+      }
       toast.success('Welcome back!', 'You have been signed in successfully');
       navigate('/dashboard');
     } catch (error: any) {

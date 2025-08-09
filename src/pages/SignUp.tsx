@@ -35,7 +35,10 @@ export default function SignUp() {
     }
 
     try {
-      await signUp(email, password);
+      const { error } = await signUp(email, password, email.split('@')[0]);
+      if (error) {
+        throw error;
+      }
       toast.success('Account created!', 'Welcome to DevKlicks! Your account has been created successfully');
       navigate('/dashboard');
     } catch (error: any) {
