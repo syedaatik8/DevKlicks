@@ -89,6 +89,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            {/* Catch-all route for handling direct URL access */}
+            <Route path="*" element={<Navigate to="/signin" replace />} />
           </Routes>
         </Router>
       </AuthProvider>

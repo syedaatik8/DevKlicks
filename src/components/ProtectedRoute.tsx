@@ -24,7 +24,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!user) {
-    toast.info('Please sign in to continue', 'You need to be signed in to access this page')
     return <Navigate to="/signin" replace />
   }
 

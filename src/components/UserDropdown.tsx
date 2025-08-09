@@ -72,7 +72,7 @@ export const UserDropdown: React.FC<UserDropdownProps> = ({ onUpgradeClick }) =>
   const userInitial = user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()
 
   return (
-    <div className="relative z-[100]" ref={dropdownRef}>
+    <div className="relative z-[9999]" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={isSigningOut}
@@ -106,15 +106,15 @@ export const UserDropdown: React.FC<UserDropdownProps> = ({ onUpgradeClick }) =>
 
       {isOpen && (
         <>
-          {/* Backdrop - higher z-index than the dropdown but lower than the dropdown content */}
+          {/* Backdrop - covers everything but stays below the dropdown */}
           <div 
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[110]"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[9998]"
             onClick={() => setIsOpen(false)}
           />
           
-          {/* Dropdown - highest z-index */}
+          {/* Dropdown - highest z-index to stay above everything */}
           <div 
-            className="fixed right-4 top-16 w-64 bg-gray-800/95 backdrop-blur-xl border border-gray-700/50 rounded-xl shadow-2xl z-[120] overflow-hidden"
+            className="fixed right-4 top-16 w-64 bg-gray-800/95 backdrop-blur-xl border border-gray-700/50 rounded-xl shadow-2xl z-[9999] overflow-hidden"
           >
             {/* User Info */}
             <div className="p-4 border-b border-gray-700/50">

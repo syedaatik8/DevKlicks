@@ -123,7 +123,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Settings className={`w-5 h-5 flex-shrink-0 ${collapsed ? '' : 'mr-3'}`} />
           {!collapsed && 'Settings'}
           {collapsed && (
-            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[100]">
               Settings
             </div>
           )}
@@ -146,7 +146,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </>
           )}
           {collapsed && (
-            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[99999]">
+            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[100]">
               Expand sidebar
             </div>
           )}
