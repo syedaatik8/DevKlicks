@@ -136,11 +136,10 @@ const ForgotPasswordForm: React.FC = () => {
               </Link>
             </div>
           </form>
+        </div>
       </div>
     </div>
   );
 };
 
 export default ForgotPasswordForm;
-  )
-}
