@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowLeft, Loader2, CheckCircle, Send } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useToastContext } from '../contexts/ToastContext';
 import { Footer } from '../components/Footer';
 
 export default function ForgotPassword() {
@@ -10,6 +11,7 @@ export default function ForgotPassword() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [emailSent, setEmailSent] = useState(false);
+  const toast = useToastContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,9 +27,11 @@ export default function ForgotPassword() {
       if (error) throw error;
 
       setMessage('Check your email for the password reset link!');
+      toast.success('Reset link sent!', 'Check your email for the password reset link');
       setEmailSent(true);
     } catch (error: any) {
       setError(error.message);
+      toast.error('Reset failed', error.message);
     } finally {
       setLoading(false);
     }

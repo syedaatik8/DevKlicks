@@ -18,6 +18,7 @@ import {
   Settings
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useToastContext } from '../contexts/ToastContext'
 import { supabase } from '../lib/supabase'
 import QRCode from 'qrcode'
 import JSZip from 'jszip'
@@ -62,6 +63,7 @@ const MAX_PREMIUM_SAVED = 100
 
 export const QRCodeGenerator: React.FC = () => {
   const { user, userTier } = useAuth()
+  const toast = useToastContext()
   const [singleUrl, setSingleUrl] = useState('')
   const [bulkUrls, setBulkUrls] = useState('')
   const [selectedFormat, setSelectedFormat] = useState<'png' | 'jpeg' | 'svg'>('png')
@@ -242,9 +244,11 @@ export const QRCodeGenerator: React.FC = () => {
       setGeneratedQRs([newQR])
       await incrementUsage()
       setSuccess('QR Code generated successfully!')
+      toast.success('QR Code generated!', 'Your QR code has been created successfully')
       setSingleUrl('')
     } catch (err) {
       setError('Failed to generate QR code. Please try again.')
+      toast.error('Generation failed', 'Failed to generate QR code')
     } finally {
       setIsProcessing(false)
     }
@@ -303,9 +307,11 @@ export const QRCodeGenerator: React.FC = () => {
       }
       
       setSuccess(`${urls.length} QR codes generated successfully!`)
+      toast.success('QR Codes generated!', `${urls.length} QR codes created successfully`)
       setBulkUrls('')
     } catch (err) {
       setError('Failed to generate QR codes. Please try again.')
+      toast.error('Generation failed', 'Failed to generate QR codes')
     } finally {
       setIsProcessing(false)
     }
@@ -343,9 +349,11 @@ export const QRCodeGenerator: React.FC = () => {
       if (error) throw error
 
       setSuccess('QR Code saved successfully!')
+      toast.success('QR Code saved!', 'Your QR code has been saved')
       loadSavedQRs()
     } catch (err) {
       setError('Failed to save QR code')
+      toast.error('Save failed', 'Failed to save QR code')
     }
   }
 
@@ -361,9 +369,11 @@ export const QRCodeGenerator: React.FC = () => {
       if (error) throw error
 
       setSuccess('QR Code deleted successfully!')
+      toast.success('QR Code deleted!', 'Your QR code has been deleted')
       loadSavedQRs()
     } catch (err) {
       setError('Failed to delete QR code')
+      toast.error('Delete failed', 'Failed to delete QR code')
     }
   }
 
@@ -430,6 +440,7 @@ export const QRCodeGenerator: React.FC = () => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     setSuccess('URL copied to clipboard!')
+    toast.success('Copied!', 'URL copied to clipboard')
   }
 
   return (

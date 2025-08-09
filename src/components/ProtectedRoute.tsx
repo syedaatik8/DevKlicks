@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useToastContext } from '../contexts/ToastContext'
 import { Loader2 } from 'lucide-react'
 
 interface ProtectedRouteProps {
@@ -8,6 +9,7 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, loading } = useAuth()
+  const toast = useToastContext()
 
   if (loading) {
     return (
@@ -22,6 +24,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!user) {
+    toast.info('Please sign in to continue', 'You need to be signed in to access this page')
     return <Navigate to="/signin" replace />
   }
 

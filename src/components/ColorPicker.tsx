@@ -14,6 +14,7 @@ import {
   Trash2
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useToastContext } from '../contexts/ToastContext'
 import { supabase } from '../lib/supabase'
 
 interface ColorPalette {
@@ -68,6 +69,7 @@ const MAX_FREE_PALETTES = 5
 
 export const ColorPicker: React.FC = () => {
   const { user } = useAuth()
+  const toast = useToastContext()
   const [selectedColor, setSelectedColor] = useState('#3B82F6')
   const [generatedPalettes, setGeneratedPalettes] = useState<string[][]>([])
   const [logoFile, setLogoFile] = useState<File | null>(null)
@@ -435,9 +437,11 @@ export const ColorPicker: React.FC = () => {
       if (error) throw error
 
       setSuccess('Palette saved successfully!')
+      toast.success('Palette saved!', 'Your color palette has been saved')
       loadSavedPalettes()
     } catch (err) {
       setError('Failed to save palette')
+      toast.error('Save failed', 'Failed to save palette')
     }
   }
 
@@ -453,15 +457,18 @@ export const ColorPicker: React.FC = () => {
       if (error) throw error
 
       setSuccess('Palette deleted successfully!')
+      toast.success('Palette deleted!', 'Your color palette has been deleted')
       loadSavedPalettes()
     } catch (err) {
       setError('Failed to delete palette')
+      toast.error('Delete failed', 'Failed to delete palette')
     }
   }
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     setSuccess('Copied to clipboard!')
+    toast.success('Copied!', `${text} copied to clipboard`)
   }
 
   const retryLogoExtraction = () => {

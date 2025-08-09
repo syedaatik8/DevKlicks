@@ -16,6 +16,7 @@ import {
   Sparkles
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useToastContext } from '../contexts/ToastContext'
 import { supabase } from '../lib/supabase'
 
 interface ProcessedImage {
@@ -36,6 +37,7 @@ const MAX_PREMIUM_SAVED = 15
 
 export const BackgroundRemover: React.FC = () => {
   const { user, userTier } = useAuth()
+  const toast = useToastContext()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(null)
   const [processedImage, setProcessedImage] = useState<string | null>(null)
@@ -207,9 +209,11 @@ export const BackgroundRemover: React.FC = () => {
       await incrementUsage()
       
       setSuccess('Background removed successfully using AI!')
+      toast.success('Background removed!', 'AI has successfully removed the background')
     } catch (err: any) {
       console.error('Background removal error:', err)
       setError(err.message || 'Failed to remove background. Please try again.')
+      toast.error('Processing failed', err.message || 'Failed to remove background')
     } finally {
       setIsProcessing(false)
     }
@@ -250,9 +254,11 @@ export const BackgroundRemover: React.FC = () => {
       if (error) throw error
 
       setSuccess('Image saved successfully!')
+      toast.success('Image saved!', 'Your processed image has been saved')
       loadSavedImages()
     } catch (err) {
       setError('Failed to save image')
+      toast.error('Save failed', 'Failed to save image')
     }
   }
 
@@ -268,9 +274,11 @@ export const BackgroundRemover: React.FC = () => {
       if (error) throw error
 
       setSuccess('Image deleted successfully!')
+      toast.success('Image deleted!', 'Your processed image has been deleted')
       loadSavedImages()
     } catch (err) {
       setError('Failed to delete image')
+      toast.error('Delete failed', 'Failed to delete image')
     }
   }
 

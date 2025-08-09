@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useToastContext } from '../contexts/ToastContext'
 import { 
   Copy, 
   RefreshCw, 
@@ -19,6 +20,7 @@ interface GenerationOptions {
 }
 
 export const LoremIpsumGenerator: React.FC = () => {
+  const toast = useToastContext()
   const [options, setOptions] = useState<GenerationOptions>({
     type: 'paragraphs',
     count: 3,
@@ -123,24 +125,29 @@ export const LoremIpsumGenerator: React.FC = () => {
 
       setGeneratedText(result)
       setSuccess('Lorem ipsum text generated successfully!')
+      toast.success('Text generated!', 'Lorem ipsum text has been generated')
     } catch (err) {
       setError('Failed to generate text. Please try again.')
+      toast.error('Generation failed', 'Failed to generate text')
     }
   }
 
   const copyToClipboard = () => {
     if (!generatedText) {
       setError('No text to copy')
+      toast.error('Nothing to copy', 'No text available to copy')
       return
     }
 
     navigator.clipboard.writeText(generatedText)
     setSuccess('Text copied to clipboard!')
+    toast.success('Copied!', 'Text copied to clipboard')
   }
 
   const downloadText = () => {
     if (!generatedText) {
       setError('No text to download')
+      toast.error('Nothing to download', 'No text available to download')
       return
     }
 
@@ -152,6 +159,7 @@ export const LoremIpsumGenerator: React.FC = () => {
     link.click()
     URL.revokeObjectURL(url)
     setSuccess('Text file downloaded!')
+    toast.success('Download complete!', 'Text file has been downloaded')
   }
 
   const clearText = () => {

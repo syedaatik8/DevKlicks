@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session, AuthError } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { useToastContext } from './ToastContext'
 
 interface AuthContextType {
   user: User | null
@@ -152,6 +153,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUserTier('free')
       setHasLifetimeUpdates(false)
       setPurchaseInfo(null)
+      // Note: We can't use toast here as this context is above ToastProvider
+      // Toast will be handled in the component that calls signOut
     }
     return { error }
   }

@@ -132,7 +132,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Collapse Toggle Button */}
         <button
           onClick={onToggleCollapse}
-          className={`w-full flex items-center px-4 py-3 text-gray-500 hover:text-gray-400 hover:bg-gray-700/30 rounded-lg transition-all duration-200 group border border-transparent ${
+          className={`w-full flex items-center px-4 py-3 text-gray-500 hover:text-gray-400 hover:bg-gray-700/30 rounded-lg transition-all duration-200 group border border-transparent z-10 ${
             collapsed ? 'justify-center px-3' : ''
           }`}
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -146,7 +146,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </>
           )}
           {collapsed && (
-            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[99999]">
               Expand sidebar
             </div>
           )}

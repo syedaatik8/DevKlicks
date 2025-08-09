@@ -15,6 +15,7 @@ import {
   Archive
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useToastContext } from '../contexts/ToastContext'
 import { supabase } from '../lib/supabase'
 import JSZip from 'jszip'
 
@@ -43,6 +44,7 @@ const MAX_FREE_FAVICONS = 10
 
 export const FaviconGenerator: React.FC = () => {
   const { user } = useAuth()
+  const toast = useToastContext()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(null)
   const [backgroundColor, setBackgroundColor] = useState('#ffffff')
@@ -193,8 +195,10 @@ export const FaviconGenerator: React.FC = () => {
 
       setGeneratedFavicons(newFavicons)
       setSuccess('Favicons generated successfully!')
+      toast.success('Favicons generated!', 'All favicon sizes have been created')
     } catch (err) {
       setError('Failed to generate favicons. Please try again.')
+      toast.error('Generation failed', 'Failed to generate favicons')
     } finally {
       setIsProcessing(false)
     }
@@ -232,8 +236,10 @@ export const FaviconGenerator: React.FC = () => {
       URL.revokeObjectURL(link.href)
       
       setSuccess('Favicon ZIP downloaded successfully!')
+      toast.success('Download complete!', 'Favicon ZIP file downloaded')
     } catch (err) {
       setError('Failed to create ZIP file. Downloading individually...')
+      toast.error('ZIP failed', 'Failed to create ZIP file. Downloading individually...')
       // Fallback to individual downloads
       Object.entries(generatedFavicons).forEach(([size, dataUrl], index) => {
         setTimeout(() => downloadFavicon(size, dataUrl), index * 200)
@@ -270,9 +276,11 @@ export const FaviconGenerator: React.FC = () => {
       if (error) throw error
 
       setSuccess('Favicon set saved successfully!')
+      toast.success('Favicon set saved!', 'Your favicon set has been saved')
       loadSavedFavicons()
     } catch (err) {
       setError('Failed to save favicon set')
+      toast.error('Save failed', 'Failed to save favicon set')
     }
   }
 
@@ -288,9 +296,11 @@ export const FaviconGenerator: React.FC = () => {
       if (error) throw error
 
       setSuccess('Favicon set deleted successfully!')
+      toast.success('Favicon set deleted!', 'Your favicon set has been deleted')
       loadSavedFavicons()
     } catch (err) {
       setError('Failed to delete favicon set')
+      toast.error('Delete failed', 'Failed to delete favicon set')
     }
   }
 
@@ -331,8 +341,10 @@ export const FaviconGenerator: React.FC = () => {
       URL.revokeObjectURL(link.href)
       
       setSuccess('Favicon ZIP downloaded successfully!')
+      toast.success('Download complete!', 'Favicon ZIP file downloaded')
     } catch (err) {
       setError('Failed to create ZIP file. Downloading individually...')
+      toast.error('ZIP failed', 'Failed to create ZIP file. Downloading individually...')
       // Fallback to individual downloads
       Object.entries(faviconSet.sizes).forEach(([size, dataUrl], index) => {
         setTimeout(() => downloadFavicon(size, dataUrl), index * 200)

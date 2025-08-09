@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, LogIn, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useToastContext } from '../contexts/ToastContext';
 import { Footer } from '../components/Footer';
 
 export default function SignIn() {
@@ -12,6 +13,7 @@ export default function SignIn() {
   const [error, setError] = useState('');
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  const toast = useToastContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,9 +22,11 @@ export default function SignIn() {
 
     try {
       await signIn(email, password);
+      toast.success('Welcome back!', 'You have been signed in successfully');
       navigate('/dashboard');
     } catch (error: any) {
       setError(error.message);
+      toast.error('Sign in failed', error.message);
     } finally {
       setLoading(false);
     }

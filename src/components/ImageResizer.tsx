@@ -17,6 +17,7 @@ import {
   Minimize
 } from 'lucide-react'
 import { useUsageTracking } from '../hooks/useUsageTracking'
+import { useToastContext } from '../contexts/ToastContext'
 
 interface ImageDimensions {
   width: number
@@ -43,6 +44,7 @@ const MAX_FILE_SIZE = 15 * 1024 * 1024 // 15MB
 
 export const ImageResizer: React.FC = () => {
   const { usage, incrementImageResize, canUseImageResize } = useUsageTracking()
+  const toast = useToastContext()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(null)
   const [originalDimensions, setOriginalDimensions] = useState<ImageDimensions>({ width: 0, height: 0 })
@@ -218,8 +220,10 @@ export const ImageResizer: React.FC = () => {
       await incrementImageResize()
       
       setSuccess('Image resized successfully!')
+      toast.success('Image resized!', 'Your image has been processed successfully')
     } catch (err) {
       setError('Failed to resize image. Please try again.')
+      toast.error('Resize failed', 'Failed to resize image. Please try again.')
     } finally {
       setIsProcessing(false)
     }

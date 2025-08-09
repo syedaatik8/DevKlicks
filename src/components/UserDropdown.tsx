@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useToastContext } from '../contexts/ToastContext'
 import { useNavigate } from 'react-router-dom'
 import { User, Settings, LogOut, Crown, ChevronDown, Camera } from 'lucide-react'
 
@@ -9,6 +10,7 @@ interface UserDropdownProps {
 
 export const UserDropdown: React.FC<UserDropdownProps> = ({ onUpgradeClick }) => {
   const { user, userTier, signOut } = useAuth()
+  const toast = useToastContext()
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -26,6 +28,7 @@ export const UserDropdown: React.FC<UserDropdownProps> = ({ onUpgradeClick }) =>
 
   const handleSignOut = async () => {
     await signOut()
+    toast.info('Signed out', 'You have been signed out successfully')
     setIsOpen(false)
   }
 
@@ -73,7 +76,7 @@ export const UserDropdown: React.FC<UserDropdownProps> = ({ onUpgradeClick }) =>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-gray-800/95 backdrop-blur-xl border border-gray-700/50 rounded-xl shadow-2xl z-[99999]">
+        <div className="absolute right-0 top-full mt-2 w-64 bg-gray-800/95 backdrop-blur-xl border border-gray-700/50 rounded-xl shadow-2xl z-[99999]" style={{ zIndex: 99999 }}>
           {/* User Info */}
           <div className="p-4 border-b border-gray-700/50">
             <div className="flex items-center space-x-3">

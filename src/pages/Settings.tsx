@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useToastContext } from '../contexts/ToastContext'
 import { ArrowLeft, Lock, User, Mail, Phone, Camera, Save, AlertCircle, CheckCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
@@ -9,6 +10,7 @@ import { Footer } from '../components/Footer'
 
 export const Settings: React.FC = () => {
   const { user, signOut } = useAuth()
+  const toast = useToastContext()
   const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -130,8 +132,10 @@ export const Settings: React.FC = () => {
 
       setAvatarUrl(publicUrl)
       setSuccess('Profile picture updated successfully!')
+      toast.success('Profile updated!', 'Your profile picture has been updated')
     } catch (err: any) {
       setError(err.message || 'Failed to update profile picture')
+      toast.error('Update failed', err.message || 'Failed to update profile picture')
     } finally {
       setLoading(false)
     }
@@ -165,8 +169,10 @@ export const Settings: React.FC = () => {
       if (profileError) throw profileError
 
       setSuccess('Profile updated successfully!')
+      toast.success('Profile updated!', 'Your profile information has been updated')
     } catch (err: any) {
       setError(err.message || 'Failed to update profile. Please try again.')
+      toast.error('Update failed', err.message || 'Failed to update profile')
     } finally {
       setLoading(false)
     }
@@ -197,9 +203,11 @@ export const Settings: React.FC = () => {
       if (error) throw error
 
       setSuccess('Password changed successfully!')
+      toast.success('Password changed!', 'Your password has been updated successfully')
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
     } catch (err: any) {
       setError(err.message || 'Failed to change password. Please try again.')
+      toast.error('Password change failed', err.message || 'Failed to change password')
     } finally {
       setLoading(false)
     }
