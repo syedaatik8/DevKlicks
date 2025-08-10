@@ -56,7 +56,6 @@ export const authService = {
 
   async getCurrentUser() {
     const { data: { user }, error } = await supabase.auth.getUser();
-    if (error) throw error;
     return user;
   },
 

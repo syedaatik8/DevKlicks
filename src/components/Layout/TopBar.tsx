@@ -26,7 +26,7 @@ const TopBar: React.FC = () => {
   };
 
   return (
-    <div className="bg-white border-b border-gray-200 px-6 py-4">
+    <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Search */}
         <div className="flex-1 max-w-md">
@@ -35,7 +35,7 @@ const TopBar: React.FC = () => {
             <input
               type="text"
               placeholder="Search..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg bg-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white outline-none transition-all"
             />
           </div>
         </div>
@@ -44,7 +44,7 @@ const TopBar: React.FC = () => {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100/50 transition-colors"
           >
             <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-semibold">
@@ -65,7 +65,7 @@ const TopBar: React.FC = () => {
 
           {/* Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+            <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-50">
               <div className="px-4 py-3 border-b border-gray-100">
                 <p className="text-sm font-medium text-gray-900">
                   {profile?.first_name && profile?.last_name 
@@ -78,7 +78,7 @@ const TopBar: React.FC = () => {
               
               <a
                 href="/profile"
-                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/50 transition-colors"
               >
                 <User className="w-4 h-4 mr-3" />
                 Profile
@@ -86,7 +86,7 @@ const TopBar: React.FC = () => {
               
               <a
                 href="/settings"
-                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/50 transition-colors"
               >
                 <Settings className="w-4 h-4 mr-3" />
                 Settings
@@ -95,7 +95,7 @@ const TopBar: React.FC = () => {
               <div className="border-t border-gray-100 mt-1 pt-1">
                 <button
                   onClick={signOut}
-                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50/50 transition-colors"
                 >
                   <LogOut className="w-4 h-4 mr-3" />
                   Sign out

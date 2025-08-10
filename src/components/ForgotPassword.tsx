@@ -95,11 +95,11 @@ const ForgotPassword = () => {
     <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-purple-100 rounded-full flex items-center justify-center mb-6 overflow-hidden">
+          <div className="mx-auto mb-6">
             <img 
               src="/src/images/DevKlicks-dark.png" 
               alt="Logo" 
-              className="h-12 w-12 object-contain"
+              className="w-[140px] h-auto object-contain mx-auto"
             />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot password?</h2>

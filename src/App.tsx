@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import ForgotPassword from './components/ForgotPassword';
-import Dashboard from './components/Dashboard';
+import Dashboard from './pages/Dashboard';
 import { authService } from './lib/supabase';
 
 function App() {

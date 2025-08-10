@@ -41,25 +41,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
 
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full bg-gray-700 text-white z-50 transition-transform duration-300 ease-in-out
+        fixed top-0 left-0 h-full bg-white border-r border-gray-200 text-gray-900 z-50 transition-transform duration-300 ease-in-out shadow-sm
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         w-64 lg:relative lg:z-auto
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-600">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <img 
               src="/src/images/DevKlicks-logo.png" 
               alt="DevKlicks" 
               className="w-8 h-8 rounded-lg"
             />
-            <h1 className="text-xl font-bold">DevKlicks</h1>
+            <h1 className="text-xl font-bold text-gray-900">DevKlicks</h1>
           </div>
           <button
             onClick={onToggle}
-            className="lg:hidden p-1 rounded-md hover:bg-gray-600 transition-colors"
+            className="lg:hidden p-1 rounded-md hover:bg-gray-100 transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 text-gray-600" />
           </button>
         </div>
 
@@ -70,10 +70,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
               <li key={item.label}>
                 <a
                   href={item.href}
-                  className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-600 transition-colors group"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors group ${
+                    item.href === '/dashboard' 
+                      ? 'bg-gray-100 text-gray-900' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
                 >
-                  <item.icon className="w-5 h-5 text-gray-400 group-hover:text-white" />
-                  <span className="group-hover:text-white">{item.label}</span>
+                  <item.icon className={`w-5 h-5 ${
+                    item.href === '/dashboard' 
+                      ? 'text-gray-700' 
+                      : 'text-gray-400 group-hover:text-gray-700'
+                  }`} />
+                  <span className={item.href === '/dashboard' ? 'font-medium' : ''}>{item.label}</span>
                 </a>
               </li>
             ))}
@@ -81,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
         </nav>
 
         {/* User Profile */}
-        <div className="border-t border-gray-600 p-4">
+        <div className="border-t border-gray-200 p-4">
           <div className="flex items-center space-x-3 mb-3">
             <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center">
               <span className="text-white font-semibold">
@@ -95,12 +103,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   : profile?.username || 'User'
                 }
               </p>
-              <p className="text-xs text-gray-400">{profile?.email}</p>
+              <p className="text-xs text-gray-500">{profile?.email}</p>
             </div>
           </div>
           <button
             onClick={signOut}
-            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-600 rounded-lg transition-colors"
+            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <LogOut className="w-4 h-4" />
             <span>Sign out</span>
