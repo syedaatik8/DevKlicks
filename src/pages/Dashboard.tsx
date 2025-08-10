@@ -1,253 +1,272 @@
-import React from 'react';
-import { 
-  BarChart3, 
-  Users, 
-  MessageSquare, 
-  TrendingUp, 
-  Calendar,
-  Settings,
-  Bell,
-  Search,
-  Plus,
-  ArrowUpRight,
-  ArrowDownRight,
-  DollarSign,
-  Activity,
-  CreditCard,
-  Download
-} from 'lucide-react';
-import DashboardLayout from '../components/Layout/DashboardLayout';
+import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { 
+  ChevronDown, 
+  MapPin, 
+  Users, 
+  Bell, 
+  ExternalLink, 
+  Edit3, 
+  Globe,
+  CreditCard,
+  Calendar,
+  Download,
+  ChevronRight
+} from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-  const { profile } = useAuth();
+  const { profile, signOut } = useAuth();
+  const [activeTab, setActiveTab] = useState('Subscription');
 
-  const stats = [
-    {
-      name: 'Total Revenue',
-      value: '$45,231.89',
-      change: '+20.1%',
-      changeType: 'positive',
-      icon: DollarSign,
-      description: 'from last month'
-    },
-    {
-      name: 'Subscriptions',
-      value: '+2350',
-      change: '+180.1%',
-      changeType: 'positive',
-      icon: Users,
-      description: 'from last month'
-    },
-    {
-      name: 'Sales',
-      value: '+12,234',
-      change: '+19%',
-      changeType: 'positive',
-      icon: CreditCard,
-      description: 'from last month'
-    },
-    {
-      name: 'Active Now',
-      value: '+573',
-      change: '+201',
-      changeType: 'positive',
-      icon: Activity,
-      description: 'since last hour'
-    },
-  ];
-
-  const recentSales = [
-    {
-      name: 'Olivia Martin',
-      email: 'olivia.martin@email.com',
-      amount: '+$1,999.00',
-      avatar: 'OM'
-    },
-    {
-      name: 'Jackson Lee',
-      email: 'jackson.lee@email.com',
-      amount: '+$39.00',
-      avatar: 'JL'
-    },
-    {
-      name: 'Isabella Nguyen',
-      email: 'isabella.nguyen@email.com',
-      amount: '+$299.00',
-      avatar: 'IN'
-    },
-    {
-      name: 'William Kim',
-      email: 'will@email.com',
-      amount: '+$99.00',
-      avatar: 'WK'
-    },
-    {
-      name: 'Sofia Davis',
-      email: 'sofia.davis@email.com',
-      amount: '+$39.00',
-      avatar: 'SD'
-    }
+  const sidebarItems = [
+    'Site statistics',
+    'General info',
+    'Blog',
+    'Form management',
+    'Integration',
+    'Custom style',
+    'Subscription',
+    'Help Center'
   ];
 
   return (
-    <DashboardLayout>
-      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">
-            Dashboard
-          </h2>
-          <div className="flex items-center space-x-2">
-            <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-              <Download className="mr-2 h-4 w-4" />
-              Download
-            </button>
-            <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-gray-900 text-white hover:bg-gray-800">
-              <Plus className="mr-2 h-4 w-4" />
-              Add New
-            </button>
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <div key={stat.name} className="rounded-xl border bg-card text-card-foreground shadow bg-white p-6">
-              <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="text-sm font-medium text-gray-600">
-                  {stat.name}
-                </div>
-                <stat.icon className="h-4 w-4 text-gray-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-gray-600 flex items-center mt-1">
-                  {stat.changeType === 'positive' ? (
-                    <ArrowUpRight className="h-3 w-3 text-green-600 mr-1" />
-                  ) : (
-                    <ArrowDownRight className="h-3 w-3 text-red-600 mr-1" />
-                  )}
-                  <span className={stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}>
-                    {stat.change}
-                  </span>
-                  <span className="ml-1">{stat.description}</span>
-                </p>
-              </div>
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">F</span>
             </div>
-          ))}
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-          {/* Overview Chart */}
-          <div className="xl:col-span-2">
-            <div className="rounded-xl border bg-card text-card-foreground shadow bg-white">
-              <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight">Overview</h3>
-              </div>
-              <div className="p-6 pt-0">
-                <div className="h-[350px] flex items-center justify-center bg-gray-50 rounded-lg">
-                  <div className="text-center">
-                    <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">Chart visualization would go here</p>
-                    <p className="text-sm text-gray-500 mt-2">Revenue analytics and trends</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Recent Sales */}
-          <div className="rounded-xl border bg-card text-card-foreground shadow bg-white">
-            <div className="flex flex-col space-y-1.5 p-6">
-              <h3 className="text-2xl font-semibold leading-none tracking-tight">Recent Sales</h3>
-              <p className="text-sm text-gray-600">You made 265 sales this month.</p>
-            </div>
-            <div className="p-6 pt-0">
-              <div className="space-y-8">
-                {recentSales.map((sale, index) => (
-                  <div key={index} className="flex items-center">
-                    <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
-                      <span className="text-sm font-medium text-gray-700">{sale.avatar}</span>
-                    </div>
-                    <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">{sale.name}</p>
-                      <p className="text-sm text-gray-600">{sale.email}</p>
-                    </div>
-                    <div className="ml-auto font-medium">{sale.amount}</div>
-                  </div>
-                ))}
+            <div>
+              <h1 className="font-semibold text-gray-900">FeatherDev</h1>
+              <div className="flex items-center text-sm text-gray-500">
+                <span>Myshop</span>
+                <ChevronDown className="w-4 h-4 ml-1" />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Additional Cards */}
-        <div className="grid gap-4 md:gap-8 lg:grid-cols-7">
-          <div className="lg:col-span-4">
-            <div className="rounded-xl border bg-card text-card-foreground shadow bg-white">
-              <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight">Recent Activity</h3>
+        {/* Navigation */}
+        <nav className="flex-1 p-4">
+          <ul className="space-y-1">
+            {sidebarItems.map((item) => (
+              <li key={item}>
+                <button
+                  onClick={() => setActiveTab(item)}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between ${
+                    activeTab === item
+                      ? 'bg-purple-50 text-purple-700 font-medium'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  {item}
+                  {item === 'General info' && <ChevronRight className="w-4 h-4" />}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Upgrade Card */}
+        <div className="p-4">
+          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-3">
+                <div className="w-8 h-8 bg-orange-400 rounded-full"></div>
               </div>
-              <div className="p-6 pt-0">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">New user registered</p>
-                      <p className="text-xs text-gray-600">2 minutes ago</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Payment received</p>
-                      <p className="text-xs text-gray-600">5 minutes ago</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">System update completed</p>
-                      <p className="text-xs text-gray-600">1 hour ago</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <p className="text-sm font-medium mb-1">You're now enjoying</p>
+              <p className="text-sm font-medium mb-3">free plan</p>
+              <button className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center">
+                Upgrade to Pro
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </button>
             </div>
-          </div>
-          
-          <div className="lg:col-span-3">
-            <div className="rounded-xl border bg-card text-card-foreground shadow bg-white">
-              <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight">Quick Actions</h3>
-              </div>
-              <div className="p-6 pt-0">
-                <div className="space-y-3">
-                  <button className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                    <span className="text-sm font-medium">Create New Project</span>
-                    <Plus className="h-4 w-4" />
-                  </button>
-                  <button className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                    <span className="text-sm font-medium">Generate Report</span>
-                    <BarChart3 className="h-4 w-4" />
-                  </button>
-                  <button className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                    <span className="text-sm font-medium">Manage Users</span>
-                    <Users className="h-4 w-4" />
-                  </button>
-                  <button className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                    <span className="text-sm font-medium">View Analytics</span>
-                    <TrendingUp className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -mr-8 -mt-8"></div>
           </div>
         </div>
       </div>
-    </DashboardLayout>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Bar */}
+        <header className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2">
+                <Users className="w-4 h-4 text-blue-500" />
+                <span className="text-sm text-gray-600">Hire a</span>
+                <span className="text-sm font-medium text-gray-900">Professional</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <MapPin className="w-4 h-4 text-green-500" />
+                <span className="text-sm font-medium text-gray-900">Useful Tips</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <Bell className="w-5 h-5 text-gray-400" />
+              <span className="text-sm text-gray-600">Draft</span>
+              <div className="flex items-center space-x-2">
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+                <span className="text-sm text-gray-600">example.emiliano.com</span>
+              </div>
+              <button className="flex items-center space-x-2 px-3 py-1.5 border border-gray-300 rounded-lg text-sm">
+                <Edit3 className="w-4 h-4" />
+                <span>Edit site</span>
+              </button>
+              <button className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium">
+                Publish
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 p-6">
+          <div className="max-w-4xl">
+            {/* Active Plan Header */}
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center space-x-4">
+                <h1 className="text-2xl font-semibold text-gray-900">Active Plan</h1>
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  • STANDARD
+                </span>
+              </div>
+              <button className="text-red-600 text-sm font-medium hover:text-red-700">
+                Cancel Plan
+              </button>
+            </div>
+
+            {/* Plan Details */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+              <div className="grid grid-cols-3 gap-8">
+                <div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <span className="text-blue-600 font-medium text-sm">STANDARD</span>
+                  </div>
+                  <p className="text-sm text-blue-600">(Manage Package)</p>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Expiration date</p>
+                  <p className="text-sm font-medium text-gray-900">September 20, 2022</p>
+                </div>
+                
+                <div className="text-right">
+                  <div className="flex items-center justify-end space-x-2 mb-1">
+                    <div className="w-4 h-4 bg-blue-600 rounded-sm flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">P</span>
+                    </div>
+                    <span className="text-sm text-gray-600">PayPal</span>
+                    <button className="text-blue-600 text-sm">(Change)</button>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">$10/<span className="text-sm font-normal text-gray-600">month</span></p>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Method */}
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Payment Method</h2>
+              
+              <div className="grid grid-cols-2 gap-4">
+                {/* PayPal */}
+                <div className="bg-white border-2 border-blue-200 rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-8 bg-blue-600 rounded flex items-center justify-center">
+                      <span className="text-white font-bold text-sm">PayPal</span>
+                    </div>
+                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    You're still using a default<br />
+                    charges workflow but automatic.
+                  </p>
+                  <button className="text-blue-600 text-sm font-medium">Remove</button>
+                </div>
+
+                {/* Stripe */}
+                <div className="bg-white border border-gray-200 rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-2xl font-bold text-purple-600">stripe</div>
+                    <div className="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    You're still using a default<br />
+                    charges workflow but automatic.
+                  </p>
+                  <button className="text-blue-600 text-sm font-medium">Remove</button>
+                </div>
+              </div>
+            </div>
+
+            {/* Billing History */}
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Billing History</h2>
+              
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-600">Purchase date</th>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-600">End date</th>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-600">Package name</th>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-600">Amount</th>
+                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-600">Payment method</th>
+                        <th className="w-12 py-3 px-6"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      <tr>
+                        <td className="py-4 px-6 text-sm text-gray-900">September 20, 2022</td>
+                        <td className="py-4 px-6 text-sm text-gray-900">September 20, 2022</td>
+                        <td className="py-4 px-6 text-sm text-gray-900">Standard plan</td>
+                        <td className="py-4 px-6 text-sm font-medium text-gray-900">$125.00</td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-4 h-4 bg-blue-600 rounded-sm flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">P</span>
+                            </div>
+                            <span className="text-sm text-blue-600 font-medium">PayPal</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <Download className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-4 px-6 text-sm text-gray-900">September 20, 2022</td>
+                        <td className="py-4 px-6 text-sm text-gray-900">September 20, 2022</td>
+                        <td className="py-4 px-6 text-sm text-gray-900">Standard plan</td>
+                        <td className="py-4 px-6 text-sm font-medium text-gray-900">$125.00</td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-purple-600 font-bold">stripe</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <Download className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
   );
 };
 
