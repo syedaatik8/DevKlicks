@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Github, Chrome, AlertCircle } from 'lucide-react';
 import { authService, AuthError } from '../lib/supabase';
+import { useNotifications } from './NotificationSystem';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +13,7 @@ const SignIn = () => {
     remember: false
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const { addNotification } = useNotifications();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,10 +35,20 @@ const SignIn = () => {
       setIsLoading(true);
       try {
         await authService.signIn(formData.email, formData.password);
+        addNotification({
+          type: 'success',
+          title: 'Welcome back!',
+          message: 'You have successfully signed in to your account.',
+        });
         // Redirect will be handled by auth state change
       } catch (error) {
         const authError = error as AuthError;
         setErrors({ general: authError.message });
+        addNotification({
+          type: 'error',
+          title: 'Sign in failed',
+          message: authError.message,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -56,21 +68,58 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="mx-auto mb-6">
+    <div className="min-h-screen flex">
+      {/* Left Side - Dark Info Section */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#111827] text-white p-12 flex-col justify-center">
+        <div className="max-w-md">
+          <div className="mb-8">
             <img 
-              src="/src/images/DevKlicks-dark.png" 
-              alt="Logo" 
-              className="w-[140px] h-auto object-contain mx-auto"
+              src="/src/images/DevKlicks-light.png" 
+              alt="DevKlicks" 
+              className="w-[160px] h-auto object-contain mb-6"
             />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
-          <p className="text-gray-600">Sign in to your account to continue</p>
+          <h2 className="text-4xl font-bold mb-6 leading-tight">
+            Welcome back to DevKlicks
+          </h2>
+          <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+            Your all-in-one developer toolkit for image processing, code optimization, 
+            and productivity enhancement. Sign in to access your personalized dashboard.
+          </p>
+          <div className="space-y-4">
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
+              <span className="text-gray-300">Access powerful developer tools</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
+              <span className="text-gray-300">Track your productivity metrics</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
+              <span className="text-gray-300">Sync across all your devices</span>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+      {/* Right Side - Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24">
+        <div className="mx-auto w-full max-w-sm lg:w-96">
+          <div className="lg:hidden text-center mb-8">
+            <img 
+              src="/src/images/DevKlicks-dark.png" 
+              alt="DevKlicks" 
+              className="w-[140px] h-auto object-contain mx-auto mb-4"
+            />
+          </div>
+          
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
+            <p className="text-gray-600">Sign in to your account to continue</p>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <button
               type="button"
@@ -210,6 +259,7 @@ const SignIn = () => {
               </Link>
             </p>
           </div>
+        </div>
         </div>
       </div>
     </div>

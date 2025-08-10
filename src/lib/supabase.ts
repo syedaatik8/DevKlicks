@@ -9,6 +9,17 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+export interface Profile {
+  id: string;
+  username: string;
+  first_name?: string;
+  last_name?: string;
+  email: string;
+  phone?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export type AuthError = {
   message: string;
 };

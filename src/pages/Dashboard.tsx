@@ -226,7 +226,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-sm font-medium text-gray-900">
                     {profile?.first_name && profile?.last_name 
                       ? `${profile.first_name} ${profile.last_name}`
-                      : profile?.username || 'User'
+                      : profile?.username || profile?.email?.split('@')[0] || 'User'
                     }
                   </p>
                   <p className="text-xs text-gray-500">{profile?.email}</p>
@@ -248,7 +248,7 @@ const Dashboard: React.FC = () => {
                         <p className="text-sm font-medium text-gray-900">
                           {profile?.first_name && profile?.last_name 
                             ? `${profile.first_name} ${profile.last_name}`
-                            : profile?.username || 'User'
+                            : profile?.username || profile?.email?.split('@')[0] || 'User'
                           }
                         </p>
                         <p className="text-xs text-gray-500">{profile?.email}</p>

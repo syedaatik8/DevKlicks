@@ -5,6 +5,7 @@ import SignUp from './components/SignUp';
 import ForgotPassword from './components/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import { authService } from './lib/supabase';
+import { NotificationProvider } from './components/NotificationSystem';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -43,32 +44,34 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50">
-        <Routes>
-          <Route 
-            path="/" 
-            element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/signin" replace />} 
-          />
-          <Route 
-            path="/signin" 
-            element={user ? <Navigate to="/dashboard" replace /> : <SignIn />} 
-          />
-          <Route 
-            path="/signup" 
-            element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} 
-          />
-          <Route 
-            path="/forgot-password" 
-            element={user ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} 
-          />
-          <Route 
-            path="/dashboard" 
-            element={user ? <Dashboard /> : <Navigate to="/signin" replace />} 
-          />
-        </Routes>
-      </div>
-    </Router>
+    <NotificationProvider>
+      <Router>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50">
+          <Routes>
+            <Route 
+              path="/" 
+              element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/signin" replace />} 
+            />
+            <Route 
+              path="/signin" 
+              element={user ? <Navigate to="/dashboard" replace /> : <SignIn />} 
+            />
+            <Route 
+              path="/signup" 
+              element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} 
+            />
+            <Route 
+              path="/forgot-password" 
+              element={user ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} 
+            />
+            <Route 
+              path="/dashboard" 
+              element={user ? <Dashboard /> : <Navigate to="/signin" replace />} 
+            />
+          </Routes>
+        </div>
+      </Router>
+    </NotificationProvider>
   );
 }
 

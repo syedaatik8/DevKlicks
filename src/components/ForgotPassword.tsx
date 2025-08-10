@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
 import { authService, AuthError } from '../lib/supabase';
+import { useNotifications } from './NotificationSystem';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { addNotification } = useNotifications();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,9 +28,19 @@ const ForgotPassword = () => {
       try {
         await authService.resetPassword(email);
         setIsSubmitted(true);
+        addNotification({
+          type: 'success',
+          title: 'Reset email sent!',
+          message: 'Check your inbox for password reset instructions.',
+        });
       } catch (error) {
         const authError = error as AuthError;
         setErrors({ general: authError.message });
+        addNotification({
+          type: 'error',
+          title: 'Reset failed',
+          message: authError.message,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -92,23 +104,60 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="mx-auto mb-6">
+    <div className="min-h-screen flex">
+      {/* Left Side - Dark Info Section */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#111827] text-white p-12 flex-col justify-center">
+        <div className="max-w-md">
+          <div className="mb-8">
             <img 
-              src="/src/images/DevKlicks-dark.png" 
-              alt="Logo" 
-              className="w-[140px] h-auto object-contain mx-auto"
+              src="/src/images/DevKlicks-light.png" 
+              alt="DevKlicks" 
+              className="w-[160px] h-auto object-contain mb-6"
             />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot password?</h2>
-          <p className="text-gray-600">
-            No worries, we'll send you reset instructions.
+          <h2 className="text-4xl font-bold mb-6 leading-tight">
+            Secure password recovery
+          </h2>
+          <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+            Don't worry, it happens to everyone. We'll help you regain access to your 
+            DevKlicks account securely and quickly.
           </p>
+          <div className="space-y-4">
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
+              <span className="text-gray-300">Secure email verification process</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
+              <span className="text-gray-300">Your data remains protected</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
+              <span className="text-gray-300">Quick and easy recovery</span>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+      {/* Right Side - Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24">
+        <div className="mx-auto w-full max-w-sm lg:w-96">
+          <div className="lg:hidden text-center mb-8">
+            <img 
+              src="/src/images/DevKlicks-dark.png" 
+              alt="DevKlicks" 
+              className="w-[140px] h-auto object-contain mx-auto mb-4"
+            />
+          </div>
+          
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot password?</h2>
+            <p className="text-gray-600">
+              No worries, we'll send you reset instructions.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {errors.general && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
@@ -162,7 +211,7 @@ const ForgotPassword = () => {
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="text-center mt-6">
           <p className="text-sm text-gray-600">
             Don't have an account?{' '}
             <Link
@@ -179,3 +228,5 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
+  )
+}

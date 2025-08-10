@@ -49,11 +49,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <img 
-              src="/src/images/DevKlicks-logo.png" 
+              src="/src/images/DevKlicks-light.png" 
               alt="DevKlicks" 
-              className="w-8 h-8 rounded-lg"
+              className="w-[120px] h-auto object-contain"
             />
-            <h1 className="text-xl font-bold text-gray-900">DevKlicks</h1>
           </div>
           <button
             onClick={onToggle}
