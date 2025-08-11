@@ -4,6 +4,7 @@ import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import ForgotPassword from './components/ForgotPassword';
 import Dashboard from './pages/Dashboard';
+import Settings from './pages/Settings';
 import { authService } from './lib/supabase';
 import { NotificationProvider } from './components/NotificationSystem';
 
@@ -67,6 +68,10 @@ function App() {
             <Route 
               path="/dashboard" 
               element={user ? <Dashboard /> : <Navigate to="/signin" replace />} 
+            />
+            <Route 
+              path="/settings" 
+              element={user ? <Settings /> : <Navigate to="/signin" replace />} 
             />
           </Routes>
         </div>

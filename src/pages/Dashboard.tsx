@@ -112,7 +112,7 @@ const Dashboard: React.FC = () => {
         {/* Logo */}
         <div className="p-6 border-b border-gray-700 flex justify-center">
           <img 
-            src="/src/images/DevKlicks-dark.png" 
+            src="/src/images/DevKlicks-logo.png" 
             alt="DevKlicks" 
             className="w-[140px] h-auto object-cover"
           />
@@ -159,7 +159,12 @@ const Dashboard: React.FC = () => {
           {bottomNavItems.map((item) => (
             <button
               key={item.name}
-              className="w-full text-left px-4 py-3 rounded-xl transition-all duration-200 group text-gray-300 hover:bg-gray-800 hover:text-white"
+              onClick={() => {
+                if (item.name === 'Settings') {
+                  window.location.href = '/settings';
+                }
+              }}
+              className="w-full text-left px-4 py-3 rounded-xl transition-all duration-200 group text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
             >
               <div className="flex items-center space-x-3">
                 <item.icon className="w-5 h-5 text-gray-400 group-hover:text-gray-300" />
@@ -226,7 +231,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-sm font-medium text-gray-900">
                     {profile?.first_name && profile?.last_name 
                       ? `${profile.first_name} ${profile.last_name}`
-                      : profile?.username || profile?.email?.split('@')[0] || 'User'
+                      : `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || profile?.username || profile?.email?.split('@')[0] || 'User'
                     }
                   </p>
                   <p className="text-xs text-gray-500">{profile?.email}</p>
@@ -248,7 +253,7 @@ const Dashboard: React.FC = () => {
                         <p className="text-sm font-medium text-gray-900">
                           {profile?.first_name && profile?.last_name 
                             ? `${profile.first_name} ${profile.last_name}`
-                            : profile?.username || profile?.email?.split('@')[0] || 'User'
+                            : `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || profile?.username || profile?.email?.split('@')[0] || 'User'
                           }
                         </p>
                         <p className="text-xs text-gray-500">{profile?.email}</p>

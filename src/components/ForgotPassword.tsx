@@ -110,7 +110,7 @@ const ForgotPassword = () => {
         <div className="max-w-md">
           <div className="mb-8">
             <img 
-              src="/src/images/DevKlicks-light.png" 
+              src="/src/images/DevKlicks-logo.png" 
               alt="DevKlicks" 
               className="w-[160px] h-auto object-contain mb-6"
             />
@@ -144,7 +144,7 @@ const ForgotPassword = () => {
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div className="lg:hidden text-center mb-8">
             <img 
-              src="/src/images/DevKlicks-dark.png" 
+              src="/src/images/DevKlicks-logo.png" 
               alt="DevKlicks" 
               className="w-[140px] h-auto object-contain mx-auto mb-4"
             />
@@ -158,69 +158,70 @@ const ForgotPassword = () => {
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {errors.general && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
-                <AlertCircle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
-                <p className="text-sm text-red-700">{errors.general}</p>
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {errors.general && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
+                  <AlertCircle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
+                  <p className="text-sm text-red-700">{errors.general}</p>
                 </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={handleChange}
-                  className={`block w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200 ${
-                    errors.email ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="Enter your email"
-                />
+              )}
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={handleChange}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200 ${
+                      errors.email ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="Enter your email"
+                  />
+                </div>
+                {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
               </div>
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="group relative w-full flex justify-center items-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Sending...' : 'Reset password'}
+                {!isLoading && <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />}
+              </button>
+            </form>
+
+            <div className="text-center pt-4 border-t border-gray-200">
+              <Link
+                to="/signin"
+                className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to sign in
+              </Link>
             </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center items-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Sending...' : 'Reset password'}
-              {!isLoading && <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />}
-            </button>
-          </form>
-
-          <div className="text-center pt-4 border-t border-gray-200">
-            <Link
-              to="/signin"
-              className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to sign in
-            </Link>
           </div>
-        </div>
 
-        <div className="text-center mt-6">
-          <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link
-              to="/signup"
-              className="font-medium text-purple-600 hover:text-purple-500 transition-colors duration-200"
-            >
-              Sign up for free
-            </Link>
-          </p>
+          <div className="text-center mt-6">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{' '}
+              <Link
+                to="/signup"
+                className="font-medium text-purple-600 hover:text-purple-500 transition-colors duration-200"
+              >
+                Sign up for free
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -228,5 +229,3 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
-  )
-}

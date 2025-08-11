@@ -115,7 +115,7 @@ const SignUp = () => {
         <div className="max-w-md">
           <div className="mb-8">
             <img 
-              src="/src/images/DevKlicks-light.png" 
+              src="/src/images/DevKlicks-logo.png" 
               alt="DevKlicks" 
               className="w-[160px] h-auto object-contain mb-6"
             />
@@ -149,7 +149,7 @@ const SignUp = () => {
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div className="lg:hidden text-center mb-8">
             <img 
-              src="/src/images/DevKlicks-dark.png" 
+              src="/src/images/DevKlicks-logo.png" 
               alt="DevKlicks" 
               className="w-[140px] h-auto object-contain mx-auto mb-4"
             />
