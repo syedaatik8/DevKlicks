@@ -161,7 +161,7 @@ const Dashboard: React.FC = () => {
               key={item.name}
               onClick={() => {
                 if (item.name === 'Settings') {
-                  window.location.href = '/settings';
+                  setActiveFeature('Settings');
                 }
               }}
               className="w-full text-left px-4 py-3 rounded-xl transition-all duration-200 group text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
@@ -211,7 +211,7 @@ const Dashboard: React.FC = () => {
                   placeholder="Search tools, files, or features..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-[17px]"
                 />
               </div>
             </div>
@@ -231,7 +231,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-sm font-medium text-gray-900">
                     {profile?.first_name && profile?.last_name 
                       ? `${profile.first_name} ${profile.last_name}`
-                      : `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || profile?.username || profile?.email?.split('@')[0] || 'User'
+                      : profile?.username || 'User'
                     }
                   </p>
                   <p className="text-xs text-gray-500">{profile?.email}</p>
@@ -253,7 +253,7 @@ const Dashboard: React.FC = () => {
                         <p className="text-sm font-medium text-gray-900">
                           {profile?.first_name && profile?.last_name 
                             ? `${profile.first_name} ${profile.last_name}`
-                            : `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || profile?.username || profile?.email?.split('@')[0] || 'User'
+                            : profile?.username || 'User'
                           }
                         </p>
                         <p className="text-xs text-gray-500">{profile?.email}</p>
@@ -293,7 +293,156 @@ const Dashboard: React.FC = () => {
 
         {/* Content */}
         <main className="flex-1 p-6 overflow-auto">
-          {activeFeature === 'Overview' ? (
+          {activeFeature === 'Settings' ? (
+            <div className="space-y-6">
+              {/* Settings Header */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200">
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
+                <p className="text-gray-600">Manage your account settings and preferences</p>
+              </div>
+
+              {/* Profile Settings */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                  <h2 className="text-lg font-semibold text-gray-900">Profile Information</h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Update your personal information and profile picture
+                  </p>
+                </div>
+
+                <div className="p-6 space-y-6">
+                  {/* Profile Picture */}
+                  <div className="flex items-center space-x-6">
+                    <div className="relative">
+                      <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden">
+                        {profile?.avatar_url ? (
+                          <img 
+                            src={profile.avatar_url} 
+                            alt="Profile" 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-white text-2xl font-semibold">
+                            {getInitials()}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="absolute -bottom-2 -right-2 w-8 h-8 bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center justify-center transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-900">Profile Picture</h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Click the camera icon to upload a new picture. Max file size: 5MB
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Form Fields */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        First Name *
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                          type="text"
+                          value={profile?.first_name || ''}
+                          readOnly
+                          className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                          placeholder="Enter your first name"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Last Name *
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                          type="text"
+                          value={profile?.last_name || ''}
+                          readOnly
+                          className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                          placeholder="Enter your last name"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email Address
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <input
+                          type="email"
+                          value={profile?.email || ''}
+                          readOnly
+                          className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm bg-gray-50 text-gray-500 cursor-not-allowed"
+                          placeholder="Email cannot be changed"
+                        />
+                      </div>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Email address cannot be changed. Contact support if you need to update it.
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Phone Number
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                        </div>
+                        <input
+                          type="tel"
+                          value={profile?.phone || ''}
+                          readOnly
+                          className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                          placeholder="Enter your phone number"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="flex justify-end pt-6 border-t border-gray-200">
+                    <button
+                      type="button"
+                      className="flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                      </svg>
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : activeFeature === 'Overview' ? (
             <div className="space-y-6">
               {/* Stats Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
